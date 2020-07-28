@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-public class LTTransform {
+public class ToLTJson {
 	
 	
 	private static String writeNullBrace(String str) { // write {}
@@ -41,7 +41,8 @@ public class LTTransform {
 		return str;
 	}
 	
-	private static String writeOtherMessage(int grid, int count, int[] size) {// write like grid:X,count:X,size:[I,X,X,X]
+	private static String writeOtherMessage(int grid, int count, int[] size) {
+		// write like grid:X,count:X,size:[I,X,X,X]
 		String str = "";
 		
 		str += "grid:"+grid;

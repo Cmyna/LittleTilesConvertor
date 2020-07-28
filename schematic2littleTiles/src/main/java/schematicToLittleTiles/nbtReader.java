@@ -40,6 +40,7 @@ public class nbtReader {
 		CompoundTag comp = (CompoundTag)input.readTag();
 		
 		//a map that contains compound tag's sub tags
+		System.out.println(comp.getName());
 		CompoundMap map = comp.getValue();
 		//find length,width,height and blocks,Data tags, and store
 		int length,width,height;
@@ -65,11 +66,11 @@ public class nbtReader {
 				blocks = getTriInt(width,height,length,(byte[])t.getValue());
 			}
 		}
-		SchemStructure structure = new SchemStructure(width,height,length,blocks,data);
+		BlockBuffer buffer = new BlockBuffer(width,height,length,blocks,data);
 		System.out.println("start greedy meshing");
 		int[] a = {0,0,0};
-		structure.greedyMeshing();
-		toLTString(structure);
+		buffer.greedyMeshing();
+		toLTString(buffer);
 	}
 	
 	public static int[][][] getTriInt(int w, int h, int l, byte[] parseFrom) {
@@ -85,14 +86,12 @@ public class nbtReader {
 		return out;
 	}
 	
-	public static void toLTString(SchemStructure struct) {
-		McTable table;
+	public static void toLTString(BlockBuffer buffer) {
 		//table = McTable.getMCMap( SchemReader.tableDir+"minecraft1.12_blockIDMap.csv");
-		table = SchemTesting.getTable();
-		String ans = LTTransform.writeLT(struct.getLittleTilesMap(), table, grid, struct.getSize());
+		McTable table = SchemTesting.getTable();
+		String ans = ToLTJson.writeLT(buffer.getLittleTilesMap(), table, grid, buffer.getSize());
 		System.out.println(ans);
-		WriteStringToFile("E:\\xjtlu\\out.txt",ans);
-		
+		WriteStringToFile("D:\\out.txt",ans);
 	}
 	
 	public static void WriteStringToFile(String filePath, String str) {

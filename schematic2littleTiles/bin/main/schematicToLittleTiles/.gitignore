@@ -10,3 +10,9 @@
 /SchemStructure.class
 /SchemTesting.class
 /nbtReader.class
+/util.class
+/ToLTJson.class
+/SchemWriter.class
+/SchematicWriter.class
+/BlockBuffer$Grid.class
+/BlockBuffer.class

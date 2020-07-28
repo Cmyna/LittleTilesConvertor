@@ -8,7 +8,7 @@ import java.nio.file.Paths;
 
 public class SchemTesting {
 	
-	public static final String SAMPLE = "E:\\project\\eclipse workspace\\schematic2littleTiles\\src\\main\\resources\\example\\castle.schematic";
+	//public static final String SAMPLE = "E:\\project\\eclipse workspace\\schematic2littleTiles\\src\\main\\resources\\example\\castle.schematic";
 
 	public static McTable table;
 	
@@ -16,9 +16,9 @@ public class SchemTesting {
 		// TODO Auto-generated method stub
 		SchemTesting r = new SchemTesting();
 		String tableDir = r.getClass().getClassLoader().getResource("")+"idTable/";
-		
+		String sample = getSchemTest("out.schematic");
 		try {
-			nbtReader.ReadIn(SAMPLE);
+			nbtReader.ReadIn(sample);
 			//System.out.println(table.id2name.get(0));
 			//System.out.println(table.name2id.get("minecraft:red_flower:8"));
 		} catch (IOException e) {
@@ -44,10 +44,23 @@ public class SchemTesting {
 		McTable table = null;
 		try {
 			table = McTable.getMCMap(tableDir+"minecraft1.12_blockIDMap.csv");
+			if (table == null) System.out.println("table is null");
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return table;
+	}
+	
+	public static String getSchemTest(String in) {
+		SchemTesting r = new SchemTesting();
+		String out = r.getClass().getClassLoader().getResource("") + "example/"+in;
+		try {
+			out = reformURL(out);
+		} catch (UnsupportedEncodingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		return out;
 	}
 }

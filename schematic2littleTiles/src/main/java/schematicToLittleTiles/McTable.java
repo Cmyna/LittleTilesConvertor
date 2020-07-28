@@ -17,6 +17,8 @@ public class McTable {
 		return new McTable(new File(filename));
 	}
 	
+	
+	
 	private McTable(File file) throws FileNotFoundException {
 		id2name = new HashMap<Integer,String>();
 		name2id = new HashMap<String,Integer>();
