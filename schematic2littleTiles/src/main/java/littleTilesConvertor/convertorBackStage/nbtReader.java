@@ -1,4 +1,4 @@
-package schematicToLittleTiles;
+package littleTilesConvertor.convertorBackStage;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -61,10 +61,10 @@ public class nbtReader {
 		
 		for (Tag<?> t : map.values()) {
 			if (t.getName().contentEquals("Data")) {
-				data = getTriInt(width,height,length,(byte[])t.getValue());
+				data = parseBlockArray(width,height,length,(byte[])t.getValue());
 			}
 			if (t.getName().contentEquals("Blocks")) {
-				blocks = getTriInt(width,height,length,(byte[])t.getValue());
+				blocks = parseBlockArray(width,height,length,(byte[])t.getValue());
 			}
 			if (t.getName().contentEquals("Entities")) {
 				String a = ((ListTag)t).getElementType().toString();
@@ -79,12 +79,12 @@ public class nbtReader {
 		toLTString(buffer);
 	}
 	
-	public static int[][][] getTriInt(int w, int h, int l, byte[] parseFrom) {
+	public static int[][][] parseBlockArray(int w, int h, int l, byte[] in) {
 		int[][][] out = new int[w][h][l];
 		for (int i=0; i<w; i++) {
 			for (int j=0; j<h; j++) {
 				for (int k=0; k<l; k++) {
-					out[i][j][k] = parseFrom[i+k*w+j*l*w];//height>length>width w+l*w+h*l*w -> i+k*w+j*l*w
+					out[i][j][k] = in[i+k*w+j*l*w];//height>length>width w+l*w+h*l*w -> i+k*w+j*l*w
 				}
 			}
 		}
@@ -95,7 +95,7 @@ public class nbtReader {
 	public static void toLTString(BlockBuffer buffer) {
 		//table = McTable.getMCMap( SchemReader.tableDir+"minecraft1.12_blockIDMap.csv");
 		McTable table = SchemTesting.getTableV112();
-		String ans = ToLTJson.writeLT(buffer.getLittleTilesMap(), table, grid, buffer.getSize());
+		String ans = TilesExporter.writeLT(buffer.getLittleTilesMap(), table, grid, buffer.getSize());
 		System.out.println(ans);
 		WriteStringToFile("D:\\out.txt",ans);
 	}

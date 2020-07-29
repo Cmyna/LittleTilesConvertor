@@ -1,4 +1,4 @@
-package schematicToLittleTiles;
+package littleTilesConvertor.convertorBackStage;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

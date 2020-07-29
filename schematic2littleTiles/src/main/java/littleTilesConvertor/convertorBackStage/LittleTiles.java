@@ -1,4 +1,4 @@
-package schematicToLittleTiles;
+package littleTilesConvertor.convertorBackStage;
 
 import java.io.File;
 import java.io.FileInputStream;

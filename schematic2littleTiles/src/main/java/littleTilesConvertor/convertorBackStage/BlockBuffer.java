@@ -1,4 +1,4 @@
-package schematicToLittleTiles;
+package littleTilesConvertor.convertorBackStage;
 
 import java.util.ArrayList;
 import java.util.HashMap;

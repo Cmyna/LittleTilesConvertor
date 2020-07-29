@@ -1,4 +1,4 @@
-package schematicToLittleTiles;
+package littleTilesConvertor.convertorBackStage;
 
 public class Box {
 	private int[] pos1;
