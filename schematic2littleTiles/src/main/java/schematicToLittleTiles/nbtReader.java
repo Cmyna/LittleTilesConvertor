@@ -23,15 +23,16 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import com.flowpowered.nbt.ByteArrayTag;
 import com.flowpowered.nbt.CompoundMap;
 import com.flowpowered.nbt.CompoundTag;
+import com.flowpowered.nbt.ListTag;
 import com.flowpowered.nbt.Tag;
 import com.flowpowered.nbt.TagType;
 import com.flowpowered.nbt.stream.NBTInputStream;
 
 public class nbtReader {
 	
-	public static int grid = 8;
+	public static int grid = 32;
 	
-	public static void ReadIn(String filename) throws FileNotFoundException, IOException{
+	public static void ScheToLTTesting(String filename) throws FileNotFoundException, IOException{
 		List<Tag> tags = new ArrayList<Tag>();
 		File file = new File(filename);
 		
@@ -65,6 +66,11 @@ public class nbtReader {
 			if (t.getName().contentEquals("Blocks")) {
 				blocks = getTriInt(width,height,length,(byte[])t.getValue());
 			}
+			if (t.getName().contentEquals("Entities")) {
+				String a = ((ListTag)t).getElementType().toString();
+				System.out.println(a);
+				((ListTag)t).getValue();
+			}
 		}
 		BlockBuffer buffer = new BlockBuffer(width,height,length,blocks,data);
 		System.out.println("start greedy meshing");
@@ -88,7 +94,7 @@ public class nbtReader {
 	
 	public static void toLTString(BlockBuffer buffer) {
 		//table = McTable.getMCMap( SchemReader.tableDir+"minecraft1.12_blockIDMap.csv");
-		McTable table = SchemTesting.getTable();
+		McTable table = SchemTesting.getTableV112();
 		String ans = ToLTJson.writeLT(buffer.getLittleTilesMap(), table, grid, buffer.getSize());
 		System.out.println(ans);
 		WriteStringToFile("D:\\out.txt",ans);

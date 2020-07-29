@@ -106,11 +106,22 @@ public class BlockBuffer {
 		if (block.equals("null")) return;
 		if (!Character.isDigit(block.charAt(block.length()-1))) block += ":0";
 		int id = table.name2id.get(block);
-		
 		if (t.get("boxes") == null) {
-			
+			int[] pos1 = {
+					Integer.parseInt(t.getAsJsonArray("bBox").get(1).toString()),
+					Integer.parseInt(t.getAsJsonArray("bBox").get(2).toString()),
+					Integer.parseInt(t.getAsJsonArray("bBox").get(3).toString()),
+			};
+			int[] pos2 = {
+					Integer.parseInt(t.getAsJsonArray("bBox").get(4).toString())-1,
+					Integer.parseInt(t.getAsJsonArray("bBox").get(5).toString())-1,
+					Integer.parseInt(t.getAsJsonArray("bBox").get(6).toString())-1,
+			};
+			Box box = new Box(pos1, pos2, id);
+			if (littleTiles.get(id)==null) littleTiles.put(id,new ArrayList<Box>());
+			littleTiles.get(id).add(box);
 		} else {
-			JsonArray boxes = t.getAsJsonArray();
+			JsonArray boxes = t.getAsJsonArray("boxes");
 			for (JsonElement b : boxes) {
 				int[] pos1 = {
 						Integer.parseInt(b.getAsJsonArray().get(1).toString()),
@@ -243,7 +254,7 @@ public class BlockBuffer {
 				int[] pos = b.getPos();
 				for (int i=pos[0];i<=pos[3];i++) 
 					for (int j=pos[1];j<=pos[4];j++)
-						for (int k=pos[2];k<pos[5];k++) data[i][j][k] = id;
+						for (int k=pos[2];k<=pos[5];k++) data[i][j][k] = id;
 			}
 		}
 		sche = true;

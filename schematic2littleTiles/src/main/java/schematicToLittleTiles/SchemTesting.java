@@ -8,17 +8,16 @@ import java.nio.file.Paths;
 
 public class SchemTesting {
 	
-	//public static final String SAMPLE = "E:\\project\\eclipse workspace\\schematic2littleTiles\\src\\main\\resources\\example\\castle.schematic";
-
-	public static McTable table;
+	
+	public static McTable table = getTableV112();
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		SchemTesting r = new SchemTesting();
 		String tableDir = r.getClass().getClassLoader().getResource("")+"idTable/";
-		String sample = getSchemTest("out.schematic");
+		String sample = getSchemTest("futureBuilding.schematic");
 		try {
-			nbtReader.ReadIn(sample);
+			nbtReader.ScheToLTTesting(sample);
 			//System.out.println(table.id2name.get(0));
 			//System.out.println(table.name2id.get("minecraft:red_flower:8"));
 		} catch (IOException e) {
@@ -32,7 +31,7 @@ public class SchemTesting {
 		return URLDecoder.decode(in.substring(5),"UTF-8");
 	}
 	
-	public static McTable getTable() {
+	public static McTable getTableV112() {
 		SchemTesting r = new SchemTesting();
 		String tableDir = r.getClass().getClassLoader().getResource("")+"idTable/";
 		try {
