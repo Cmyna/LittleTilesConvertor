@@ -15,7 +15,7 @@ public class SchemTesting {
 		// TODO Auto-generated method stub
 		SchemTesting r = new SchemTesting();
 		String tableDir = r.getClass().getClassLoader().getResource("")+"idTable/";
-		String sample = getSchemTest("futureBuilding.schematic");
+		String sample = getSchemTest("mediumTest.schematic");
 		try {
 			schemReadIn.ScheToLTTesting(sample);
 			//System.out.println(table.id2name.get(0));

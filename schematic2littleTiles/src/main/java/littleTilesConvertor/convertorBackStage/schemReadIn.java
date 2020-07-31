@@ -80,7 +80,6 @@ public class schemReadIn {
 	public static void ScheToLTTesting(String filename) throws FileNotFoundException, IOException{
 		List<Tag> tags = new ArrayList<Tag>();
 		File file = new File(filename);
-		
 		NBTInputStream input = new NBTInputStream(new FileInputStream(file));
 		//read outside unamed compoundtag
 		CompoundTag comp = (CompoundTag)input.readTag();

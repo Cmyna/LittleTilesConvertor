@@ -29,6 +29,10 @@ import javax.swing.JTextArea;
 import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileFilter;
+
+import littleTilesConvertor.convertorBackStage.BlockBuffer;
+import littleTilesConvertor.convertorBackStage.schemReadIn;
+
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import java.awt.event.ActionListener;
@@ -48,6 +52,7 @@ public class mainWin extends JFrame {
 	private JTextArea textArea;
 	private JLabel scheDir;
 	private File file;
+	private JComboBox Grid;
 
 	/**
 	 * Launch the application.
@@ -141,7 +146,23 @@ public class mainWin extends JFrame {
 				if (file == null) return;
 				//converting schematic to ltjson
 				//make another frame to show a progress bar
+				BlockBuffer bb = new BlockBuffer();
+				Thread back = new Thread(new Runnable() {
+
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						bb.initBySchemFile(file,Integer.parseInt(Grid.getSelectedItem().toString()));
+						bb.greedyMeshing();
+						String lt = bb.getLTJson();
+						textArea.setText(lt);
+					}
+					
+				}, "back");
+				/*convertProgress cp = new convertProgress(bb);
+				cp.setVisible(true);*/
 				
+				back.start();
 			}
 		});
 		toLT.setFont(new Font("ËÎÌו", Font.PLAIN, 20));
@@ -153,10 +174,10 @@ public class mainWin extends JFrame {
 		gridText.setBounds(504, 55, 72, 25);
 		schem.add(gridText);
 		
-		JComboBox comboBox = new JComboBox();
-		comboBox.setModel(new DefaultComboBoxModel(new String[] {"1", "2", "4", "8", "16", "32"}));
-		comboBox.setBounds(546, 56, 53, 25);
-		schem.add(comboBox);
+		Grid = new JComboBox();
+		Grid.setModel(new DefaultComboBoxModel(new String[] {"1", "2", "4", "8", "16", "32"}));
+		Grid.setBounds(546, 56, 53, 25);
+		schem.add(Grid);
 		
 		JPanel littleTiles = new JPanel();
 		littleTiles.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));

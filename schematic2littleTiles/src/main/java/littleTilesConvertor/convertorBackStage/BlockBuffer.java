@@ -1,5 +1,8 @@
 package littleTilesConvertor.convertorBackStage;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -19,6 +22,7 @@ import com.flowpowered.nbt.IntArrayTag;
 import com.flowpowered.nbt.ListTag;
 import com.flowpowered.nbt.ShortArrayTag;
 import com.flowpowered.nbt.Tag;
+import com.flowpowered.nbt.stream.NBTInputStream;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -39,7 +43,57 @@ public class BlockBuffer {
 	private boolean sche;
 	private boolean lt;
 	private McTable table;
-	private int progressrate = 0;
+	private float progressrate = 0;
+	
+	public BlockBuffer() {
+		//do nothing
+		lt = false;
+		sche = false;
+	}
+	
+	public void initBySchemFile (File file, int g) {
+		NBTInputStream input;
+		grid = g;
+		try {
+			input = new NBTInputStream(new FileInputStream(file));
+			CompoundTag comp = (CompoundTag)input.readTag();
+			CompoundMap map = comp.getValue();
+			
+			int length,width,height;
+			length=width=height=0;
+			int[][][] blocks = new int[width][height][length];
+			int[][][] data = new int[width][height][length];
+			
+			for (Tag<?> t : map.values()) {
+				//System.out.println(t.getName());
+				if (t.getName().contentEquals("Length")) length = (int)(short) t.getValue();
+				if (t.getName().contentEquals("Width")) width = (int)(short) t.getValue();
+				if (t.getName().contentEquals("Height")) height = (int)(short) t.getValue();
+				
+			}
+			
+			for (Tag<?> t : map.values()) {
+				if (t.getName().contentEquals("Data")) {
+					data = schemReadIn.parseBlockArray(width,height,length,(byte[])t.getValue());
+				}
+				if (t.getName().contentEquals("Blocks")) {
+					blocks = schemReadIn.parseBlockArray(width,height,length,(byte[])t.getValue());
+				}
+				if (t.getName().contentEquals("Entities")) {
+					String a = ((ListTag)t).getElementType().toString();
+					System.out.println(a);
+					((ListTag)t).getValue();
+				}
+			}
+			//progressBar
+			//progressBar
+			this.initBySchem(width,height,length,blocks,data);
+			//bb = new BlockBuffer(width,height,length,blocks,data);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	/**
 	 * initilaize by schematic format
@@ -50,6 +104,10 @@ public class BlockBuffer {
 	 * @param meta schematic block metadata
 	 */
 	public BlockBuffer(int w,int h,int l,int[][][] blocks,int[][][] meta) {
+		initBySchem(w,h,l,blocks,meta);
+	}
+	
+	public void initBySchem(int w,int h,int l,int[][][] blocks,int[][][] meta) {
 		length = l;
 		width = w;
 		height = h;
@@ -63,7 +121,6 @@ public class BlockBuffer {
 					data[i][j][k] = (meta[i][j][k]&0xff) + ((blocks[i][j][k]&0xff)<<8);
 					
 					mark[i][j][k] = false;
-					
 				}
 			}
 		}
@@ -77,7 +134,10 @@ public class BlockBuffer {
 	 * @param tab McTable map
 	 */
 	public BlockBuffer(String ltjson, McTable tab) {
-		
+		initByLT(ltjson,tab);
+	}
+	
+	public void initByLT(String ltjson, McTable tab) {
 		littleTiles = new HashMap<Integer,List<Box>>();
 		table = tab;
 		
@@ -169,7 +229,10 @@ public class BlockBuffer {
 					int y = j;
 					int x = k;
 					
-					progressrate ++;
+					//counting progressRate//
+					progressrate += 1.0/(float)width/(float)height/(float)length*50;
+					//---------------------//
+					
 					System.out.printf("%d %d %d %d\n",i,j,k,data[i][j][k]);
 					
 					int[] p2 = expandBox(id,z,y,x);
@@ -261,6 +324,11 @@ public class BlockBuffer {
 		sche = true;
 	}
 	
+	public String getLTJson() {
+		String ans = TilesExporter.writeLT(this.littleTiles, SchemTesting.getTableV112(), grid, this.getSize());
+		return ans;
+	}
+	
 	
 	
 	public Map<Integer,List<Box>> getLittleTilesMap() {
@@ -280,8 +348,12 @@ public class BlockBuffer {
 		return data;
 	}
 	
-	public int getProgress() {
+	public float getProgress() {
 		return progressrate;
+	}
+	
+	public boolean getltStat() {
+		return lt;
 	}
 	
 	protected class Grid {
