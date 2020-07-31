@@ -28,9 +28,54 @@ import com.flowpowered.nbt.Tag;
 import com.flowpowered.nbt.TagType;
 import com.flowpowered.nbt.stream.NBTInputStream;
 
-public class nbtReader {
+public class schemReadIn {
 	
 	public static int grid = 32;
+	
+	public static BlockBuffer read(File file) {
+		NBTInputStream input;
+		BlockBuffer bb = null;
+		try {
+			input = new NBTInputStream(new FileInputStream(file));
+			CompoundTag comp = (CompoundTag)input.readTag();
+			CompoundMap map = comp.getValue();
+			
+			int length,width,height;
+			length=width=height=0;
+			int[][][] blocks = new int[width][height][length];
+			int[][][] data = new int[width][height][length];
+			
+			for (Tag<?> t : map.values()) {
+				//System.out.println(t.getName());
+				if (t.getName().contentEquals("Length")) length = (int)(short) t.getValue();
+				if (t.getName().contentEquals("Width")) width = (int)(short) t.getValue();
+				if (t.getName().contentEquals("Height")) height = (int)(short) t.getValue();
+				
+			}
+			
+			for (Tag<?> t : map.values()) {
+				if (t.getName().contentEquals("Data")) {
+					data = parseBlockArray(width,height,length,(byte[])t.getValue());
+				}
+				if (t.getName().contentEquals("Blocks")) {
+					blocks = parseBlockArray(width,height,length,(byte[])t.getValue());
+				}
+				if (t.getName().contentEquals("Entities")) {
+					String a = ((ListTag)t).getElementType().toString();
+					System.out.println(a);
+					((ListTag)t).getValue();
+				}
+			}
+			
+			bb = new BlockBuffer(width,height,length,blocks,data);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//read outside unamed compoundtag
+		
+		return bb;
+	}
 	
 	public static void ScheToLTTesting(String filename) throws FileNotFoundException, IOException{
 		List<Tag> tags = new ArrayList<Tag>();
@@ -74,7 +119,6 @@ public class nbtReader {
 		}
 		BlockBuffer buffer = new BlockBuffer(width,height,length,blocks,data);
 		System.out.println("start greedy meshing");
-		int[] a = {0,0,0};
 		buffer.greedyMeshing();
 		toLTString(buffer);
 	}

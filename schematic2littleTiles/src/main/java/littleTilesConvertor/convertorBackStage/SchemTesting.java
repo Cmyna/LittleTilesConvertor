@@ -17,7 +17,7 @@ public class SchemTesting {
 		String tableDir = r.getClass().getClassLoader().getResource("")+"idTable/";
 		String sample = getSchemTest("futureBuilding.schematic");
 		try {
-			nbtReader.ScheToLTTesting(sample);
+			schemReadIn.ScheToLTTesting(sample);
 			//System.out.println(table.id2name.get(0));
 			//System.out.println(table.name2id.get("minecraft:red_flower:8"));
 		} catch (IOException e) {

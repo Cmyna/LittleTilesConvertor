@@ -39,7 +39,7 @@ public class BlockBuffer {
 	private boolean sche;
 	private boolean lt;
 	private McTable table;
-	
+	private int progressrate = 0;
 	
 	/**
 	 * initilaize by schematic format
@@ -169,6 +169,7 @@ public class BlockBuffer {
 					int y = j;
 					int x = k;
 					
+					progressrate ++;
 					System.out.printf("%d %d %d %d\n",i,j,k,data[i][j][k]);
 					
 					int[] p2 = expandBox(id,z,y,x);
@@ -277,6 +278,10 @@ public class BlockBuffer {
 	
 	public int[][][] getBlockData() {
 		return data;
+	}
+	
+	public int getProgress() {
+		return progressrate;
 	}
 	
 	protected class Grid {
