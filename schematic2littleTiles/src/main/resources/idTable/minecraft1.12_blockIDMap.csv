@@ -40,6 +40,10 @@ oak_leaves,minecraft:leaves,18,0
 spruce_leaves,minecraft:leaves,18,1
 birch_leaves,minecraft:leaves,18,2
 jungle_leaves,minecraft:leaves,18,3
+oak_leaves,minecraft:leaves,18,4
+spruce_leaves,minecraft:leaves,18,5
+birch_leaves,minecraft:leaves,18,6
+jungle_leaves,minecraft:leaves,18,7
 oak_leaves,minecraft:leaves,18,8
 spruce_leaves,minecraft:leaves,18,9
 birch_leaves,minecraft:leaves,18,10

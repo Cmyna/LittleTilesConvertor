@@ -40,6 +40,14 @@ oak_leaves,minecraft:leaves,18,0
 spruce_leaves,minecraft:leaves,18,1
 birch_leaves,minecraft:leaves,18,2
 jungle_leaves,minecraft:leaves,18,3
+oak_leaves,minecraft:leaves,18,4
+spruce_leaves,minecraft:leaves,18,5
+birch_leaves,minecraft:leaves,18,6
+jungle_leaves,minecraft:leaves,18,7
+oak_leaves,minecraft:leaves,18,8
+spruce_leaves,minecraft:leaves,18,9
+birch_leaves,minecraft:leaves,18,10
+jungle_leaves,minecraft:leaves,18,11
 sponge,minecraft:sponge,19,0
 wet_sponge,minecraft:sponge,19,1
 glass,minecraft:glass,20,0
@@ -245,6 +253,8 @@ red_stained_glass_pane,minecraft:stained_glass_pane,160,14
 black_stained_glass_pane,minecraft:stained_glass_pane,160,15
 acacia_leaves,minecraft:leaves2,161,0
 dark_oak_leaves,minecraft:leaves2,161,1
+acacia_leaves,minecraft:leaves2,161,4
+dark_oak_leaves,minecraft:leaves2,161,5
 acacia_log,minecraft:log2,162,0
 dark_oak_log,minecraft:log2,162,1
 acacia_wood_stairs,minecraft:acacia_stairs,163,0
