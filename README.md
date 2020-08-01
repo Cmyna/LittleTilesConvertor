@@ -1,2 +1,2 @@
-# schematicTolittletiles
-a tool to convert schematic data format to littleTiles json format
+# LittleTiles Convertor
+a tool to convert structure between littleTiles json string and schematic file format
