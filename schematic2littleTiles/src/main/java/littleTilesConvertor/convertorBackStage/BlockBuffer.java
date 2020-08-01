@@ -44,6 +44,7 @@ public class BlockBuffer {
 	private boolean lt;
 	private McTable table;
 	private float progressrate = 0;
+	private int[] min = {Integer.MAX_VALUE,Integer.MAX_VALUE,Integer.MAX_VALUE};
 	
 	public BlockBuffer() {
 		//do nothing
@@ -53,7 +54,6 @@ public class BlockBuffer {
 	
 	public void initBySchemFile (File file, int g) {
 		NBTInputStream input;
-		grid = g;
 		try {
 			input = new NBTInputStream(new FileInputStream(file));
 			CompoundTag comp = (CompoundTag)input.readTag();
@@ -81,13 +81,13 @@ public class BlockBuffer {
 				}
 				if (t.getName().contentEquals("Entities")) {
 					String a = ((ListTag)t).getElementType().toString();
-					System.out.println(a);
+					//System.out.println(a);
 					((ListTag)t).getValue();
 				}
 			}
 			//progressBar
 			//progressBar
-			this.initBySchem(width,height,length,blocks,data);
+			this.initBySchem(width,height,length,blocks,data,g);
 			//bb = new BlockBuffer(width,height,length,blocks,data);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -103,17 +103,18 @@ public class BlockBuffer {
 	 * @param blocks schematic block data
 	 * @param meta schematic block metadata
 	 */
-	public BlockBuffer(int w,int h,int l,int[][][] blocks,int[][][] meta) {
-		initBySchem(w,h,l,blocks,meta);
+	public BlockBuffer(int w,int h,int l,int[][][] blocks,int[][][] meta,int g) {
+		initBySchem(w,h,l,blocks,meta,g);
 	}
 	
-	public void initBySchem(int w,int h,int l,int[][][] blocks,int[][][] meta) {
+	public void initBySchem(int w,int h,int l,int[][][] blocks,int[][][] meta, int g) {
 		length = l;
 		width = w;
 		height = h;
 		data = new int[w][h][l];
 		mark = new boolean[w][h][l];
 		littleTiles = new HashMap<Integer,List<Box>>();
+		grid = g;
 		//divided = new LinkedList<int[][][]>();
 		for (int i=0; i<width; i++) {
 			for (int j=0; j<height; j++) {
@@ -147,10 +148,12 @@ public class BlockBuffer {
 		String h = root.get("size").getAsJsonArray().get(2).toString();
 		String l = root.get("size").getAsJsonArray().get(3).toString();
 		
+		//int sw = Integer.parseInt(root.get("min").getAsJsonArray().get(1).toString());
+		
 		//get width,height,length
-		width = Integer.parseInt(w);
-		height = Integer.parseInt(h);
-		length = Integer.parseInt(l);
+		width = Integer.parseInt(w) + Integer.parseInt(root.get("min").getAsJsonArray().get(1).toString());
+		height = Integer.parseInt(h) + Integer.parseInt(root.get("min").getAsJsonArray().get(2).toString());
+		length = Integer.parseInt(l) + Integer.parseInt(root.get("min").getAsJsonArray().get(3).toString());
 		
 		JsonArray tiles = root.get("tiles").getAsJsonArray();
 		for (JsonElement t : tiles) {
@@ -228,19 +231,22 @@ public class BlockBuffer {
 					int z = i;
 					int y = j;
 					int x = k;
+					if (min[0]>z) min[0]=z;
+					if (min[1]>y) min[1]=y;
+					if (min[2]>x) min[2]=x;
 					
 					//counting progressRate//
 					progressrate += 1.0/(float)width/(float)height/(float)length*50;
 					//---------------------//
 					
-					System.out.printf("%d %d %d %d\n",i,j,k,data[i][j][k]);
+					//System.out.printf("%d %d %d %d\n",i,j,k,data[i][j][k]);
 					
 					int[] p2 = expandBox(id,z,y,x);
 					markBox(z,y,x,p2[0],p2[1],p2[2], true);
 					int[] p1 = {z,y,x};
 					Box box = new Box(p1,p2,id);
-					System.out.println("id:"+(id>>8));
-					System.out.println("box: "+p1[0]+","+p1[1]+","+p1[2]+","+" "+p2[0]+","+p2[1]+","+p2[2]);
+					//System.out.println("id:"+(id>>8));
+					//System.out.println("box: "+p1[0]+","+p1[1]+","+p1[2]+","+" "+p2[0]+","+p2[1]+","+p2[2]);
 					if (littleTiles.get(id)==null) {
 						littleTiles.put(id,new ArrayList<Box>());
 					}
@@ -325,7 +331,7 @@ public class BlockBuffer {
 	}
 	
 	public String getLTJson() {
-		String ans = TilesExporter.writeLT(this.littleTiles, SchemTesting.getTableV112(), grid, this.getSize());
+		String ans = TilesExporter.writeLT(this.littleTiles, SchemTesting.getTableV112(), grid, this.getSize(), min);
 		return ans;
 	}
 	

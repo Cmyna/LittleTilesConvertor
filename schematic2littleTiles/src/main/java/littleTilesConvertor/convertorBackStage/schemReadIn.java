@@ -67,7 +67,7 @@ public class schemReadIn {
 				}
 			}
 			
-			bb = new BlockBuffer(width,height,length,blocks,data);
+			bb = new BlockBuffer(width,height,length,blocks,data,16);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -116,10 +116,18 @@ public class schemReadIn {
 				((ListTag)t).getValue();
 			}
 		}
-		BlockBuffer buffer = new BlockBuffer(width,height,length,blocks,data);
+		long b1,b2;
+		b1 = System.currentTimeMillis();
+		BlockBuffer buffer = new BlockBuffer(width,height,length,blocks,data,16);
+		b2 = System.currentTimeMillis();
+		System.out.println(b2-b1);
 		System.out.println("start greedy meshing");
 		buffer.greedyMeshing();
+		b1 = System.currentTimeMillis();
+		System.out.println(b1-b2);
 		toLTString(buffer);
+		b2 = System.currentTimeMillis();
+		System.out.println(b2-b1);
 	}
 	
 	public static int[][][] parseBlockArray(int w, int h, int l, byte[] in) {
@@ -138,9 +146,9 @@ public class schemReadIn {
 	public static void toLTString(BlockBuffer buffer) {
 		//table = McTable.getMCMap( SchemReader.tableDir+"minecraft1.12_blockIDMap.csv");
 		McTable table = SchemTesting.getTableV112();
-		String ans = TilesExporter.writeLT(buffer.getLittleTilesMap(), table, grid, buffer.getSize());
-		System.out.println(ans);
-		WriteStringToFile("D:\\out.txt",ans);
+		String ans = buffer.getLTJson();
+		//System.out.println(ans);
+		WriteStringToFile(SchemTesting.getResources("/output/out.txt"),ans);
 	}
 	
 	public static void WriteStringToFile(String filePath, String str) {

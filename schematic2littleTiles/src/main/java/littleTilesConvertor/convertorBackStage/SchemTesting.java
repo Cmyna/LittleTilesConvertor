@@ -15,7 +15,7 @@ public class SchemTesting {
 		// TODO Auto-generated method stub
 		SchemTesting r = new SchemTesting();
 		String tableDir = r.getClass().getClassLoader().getResource("")+"idTable/";
-		String sample = getSchemTest("mediumTest.schematic");
+		String sample = getResources("example/MediumTest.schematic");
 		try {
 			schemReadIn.ScheToLTTesting(sample);
 			//System.out.println(table.id2name.get(0));
@@ -43,7 +43,7 @@ public class SchemTesting {
 		McTable table = null;
 		try {
 			table = McTable.getMCMap(tableDir+"minecraft1.12_blockIDMap.csv");
-			if (table == null) System.out.println("table is null");
+			//if (table == null) System.out.println("table is null");
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -51,9 +51,9 @@ public class SchemTesting {
 		return table;
 	}
 	
-	public static String getSchemTest(String in) {
+	public static String getResources(String in) {
 		SchemTesting r = new SchemTesting();
-		String out = r.getClass().getClassLoader().getResource("") + "example/"+in;
+		String out = r.getClass().getClassLoader().getResource("") + in;
 		try {
 			out = reformURL(out);
 		} catch (UnsupportedEncodingException e1) {

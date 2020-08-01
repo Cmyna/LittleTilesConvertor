@@ -76,37 +76,57 @@ public class TilesExporter {
 		return str;
 	}
 	
-	private static String writeBracket(String str, String name, String content) {//write somethin like name:[]
-		str += name+":[" + content + "]";
+	private static StringBuilder writeNullBrace(StringBuilder str) {
+		str.insert(0, "{");
+		str.append("}");
 		return str;
 	}
 	
 	private static String writeBoxPos(Box box) {// write something like '[I;0,0,0,16,8,8]'
 		//well... the pos2 should +1 because the lt format is this
 		//every one should add gridpos
-		String str = "";
-		str += "[I;";
+		StringBuilder str = new StringBuilder("");
+		
+		str.append("[I;");
 		int[] n = box.getPos();
 		for (int i=0; i<n.length; i++) {
-			str += (i<3?n[i]:(n[i]+1)) + ",";
+			str.append(i<3?n[i]:(n[i]+1));
+			str.append(",");
 		}
-		str = str.substring(0, str.length()-1);
-		str += "]";
-		return str;
+		str.deleteCharAt(str.length()-1);
+		str.append("]");
+		return str.toString();
 	}
 	
 	private static String writeBoxTile(McTable table, int id) {// write something like 'minecraft:air:0'
-		String str = "";
-		str += "tile:{block:\"";
-		str += table.id2name.get(id);
-		str += "\"}";
-		System.out.println("[to LT json]: "+id+" "+table.id2name.get(id));
-		return str;
+		StringBuilder str = new StringBuilder("");
+		str.append("tile:{block:\"");
+		str.append(table.id2name.get(id));
+		str.append("\"}");
+		return str.toString();
 	}
 	
-	private static String writeOtherMessage(int grid, int count, int[] size) {
-		// write like grid:X,count:X,size:[I,X,X,X]
-		String str = "";
+	private static String writeOtherMessage(int grid, int count, int[] size, int[] min) {
+		// write like grid:X,count:X,size:[I,X,X,X],min[I,X,X,X]
+		StringBuilder str = new StringBuilder("grid:");
+		str.append(grid);
+		str.append(",count:");
+		str.append(count);
+		str.append(",size:[I;");
+		for (int i: size) {
+			str.append(i);
+			str.append(",");
+		}
+		str.deleteCharAt(str.length()-1);
+		str.append("],");
+		str.append("min:[I;");
+		for (int i:min) {
+			str.append(i);
+			str.append(",");
+		}
+		str.deleteCharAt(str.length()-1);
+		str.append("]");
+		/*String str = "";
 		
 		str += "grid:"+grid;
 		str += ","+"count:"+count;
@@ -115,11 +135,17 @@ public class TilesExporter {
 			str += i+",";
 		}
 		str = str.substring(0,str.length()-1);
-		str +="]";
-		return str;
+		str +="]";*/
+		return str.toString();
 	}
 	
-	private static String writeBoxes(List<Box> list, McTable table) {
+	/*private static StringBuilder writeOtherMessage(StringBuilder str, int grid, int count, int[] size) {
+		
+		
+		return str;
+	}*/
+	
+	/*private static String writeBoxes(List<Box> list, McTable table) {
 		// write like {boxes:[&BOX,&BOX,&BOX],&TILE}
 		// or like bbox:&BOX,&TILE
 		String str = "";
@@ -143,30 +169,56 @@ public class TilesExporter {
 		str += "],";
 		str += writeBoxTile(table, list.get(0).getBlockID());
 		return writeNullBrace(str);
+	}*/
+	
+	public static String writeBoxes( List<Box> list, McTable table) {
+		// write like {boxes:[&BOX,&BOX,&BOX],&TILE}
+		// or like bbox:&BOX,&TILE
+		StringBuilder str = new StringBuilder("");
+		
+		int size = list.size();
+		if (size==1) {
+			str.append("bBox:");
+			str.append(writeBoxPos(list.get(0)));
+			str.append(",");
+			str.append(writeBoxTile(table, list.get(0).getBlockID()));
+			return writeNullBrace(str).toString();
+		}
+		if (size==0) return str.toString();
+		
+		str.append("boxes:[");
+		for (Box b : list) {
+			str.append(writeBoxPos(b));
+			str.append(",");
+		}
+		str.deleteCharAt(str.length()-1);
+		str.append("],");
+		str.append(writeBoxTile(table, list.get(0).getBlockID()));
+		
+		return writeNullBrace(str).toString();
 	}
 	
-	private static String writeBlockTiles(Map<Integer,List<Box>> map, McTable table) {
+	private static void writeBlockTiles(StringBuilder str, Map<Integer,List<Box>> map, McTable table) {
 		// write like tiles:[&boxes,&boxes,&boxes]
-		String str = "";
+		//StringBuilder str = new StringBuilder("");
+		str.append("tiles:[");
 
 		Set<Entry<Integer, List<Box>>> entries = map.entrySet();
-		String content = "";
 		for (Entry<Integer, List<Box>> e : entries) {
-			System.out.println(e.getValue());
-			content += writeBoxes(e.getValue(),table) + ",";
+			str.append(writeBoxes(e.getValue(),table));
+			str.append(",");
 		}
-		//System.out.println(content);
-		content = content.substring(0,content.length()-1);
+		str.deleteCharAt(str.length()-1);
 		
-		str = writeBracket(str,"tiles",content);
+		str.append("]");
 		
-		
-		return str;
+		//return str.toString();
 	}
 	
-	public static String writeLT(Map<Integer,List<Box>> map, McTable table, int grid, int[] size) {
+	
+	public static String writeLT(Map<Integer,List<Box>> map, McTable table, int grid, int[] size, int[] min) {
 		//write like {&tiles,&othermessage}
-		String str = "";
+		StringBuilder str = new StringBuilder("");
 		
 		int c = 0;
 		Set<Entry<Integer, List<Box>>> entries = map.entrySet();
@@ -174,14 +226,18 @@ public class TilesExporter {
 			c += e.getValue().size();
 		}
 		
-		str += writeBlockTiles(map, table) + ",";
-		str += writeOtherMessage(grid,c,size);
+		//str += writeBlockTiles(map, table) + ",";
+		//str += writeOtherMessage(grid,c,size);
+		writeBlockTiles(str, map, table);
+		str.append(",");
+		str.append(writeOtherMessage(grid,c,size,min));
 		
-		return writeNullBrace(str);
+		return writeNullBrace(str).toString();
+		//return str.toString();
 	}
 	
 	public static void main(String args[]) {
-		String sample = "D:\\out.txt";
+		String sample = SchemTesting.getResources("/output/out.txt");
 		File f = new File(sample);
 		
 		FileInputStream in;
@@ -196,7 +252,7 @@ public class TilesExporter {
 	        BlockBuffer bb = new BlockBuffer(lt,SchemTesting.getTableV112());
 	        bb.LTtoSchem();
 	        
-	        writeSchematic("D:\\out.schematic", constructSchematic(bb));
+	        writeSchematic(SchemTesting.getResources("/output/out.schematic"), constructSchematic(bb));
 	        
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block

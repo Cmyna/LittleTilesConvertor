@@ -48,7 +48,7 @@ import javax.swing.DefaultComboBoxModel;
 public class mainWin extends JFrame {
 
 	private JPanel contentPane;
-	private String littleTilesJson;
+	private String littleTilesJson = "";
 	private JTextArea textArea;
 	private JLabel scheDir;
 	private File file;
@@ -155,6 +155,10 @@ public class mainWin extends JFrame {
 						bb.initBySchemFile(file,Integer.parseInt(Grid.getSelectedItem().toString()));
 						bb.greedyMeshing();
 						String lt = bb.getLTJson();
+						if (lt.length()>=250000) {
+							littleTilesJson = lt;
+							lt = lt.substring(0, 200) + "...\n\n\n\n\nUse Copy Buttion to get full Text";
+						}
 						textArea.setText(lt);
 					}
 					
@@ -209,7 +213,7 @@ public class mainWin extends JFrame {
 		JButton copy = new JButton("copy");
 		copy.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				littleTilesJson = textArea.getText();
+				//littleTilesJson = textArea.getText();
 				Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(littleTilesJson), null);
 			}
 		});
@@ -227,7 +231,9 @@ public class mainWin extends JFrame {
 					if (trans.isDataFlavorSupported(DataFlavor.stringFlavor)) {
 						try {
 							littleTilesJson = (String) trans.getTransferData(DataFlavor.stringFlavor);
-							textArea.setText(littleTilesJson);
+							String lt = littleTilesJson;
+							if (littleTilesJson.length() >= 200000) lt = littleTilesJson.substring(0, 200);
+							textArea.setText(lt);
 						} catch (UnsupportedFlavorException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
