@@ -5,6 +5,7 @@ import java.awt.FlowLayout;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import java.awt.event.ActionListener;
@@ -23,9 +24,9 @@ public class progressWaiting extends JDialog {
 	 */
 	public static void main(String[] args) {
 		try {
-			progressWaiting dialog = new progressWaiting();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
+			//progressWaiting dialog = new progressWaiting();
+			//dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+			//dialog.setVisible(true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -34,27 +35,18 @@ public class progressWaiting extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public progressWaiting() {
+	public progressWaiting(JFrame f) {
+		super(f);
 		setTitle("Converting");
 		setName("Converting");
 		setResizable(false);
-		setBounds(100, 100, 300, 116);
+		setBounds(100, 100, 300, 87);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
-		{
-			JButton cancelButton = new JButton("Cancel");
-			cancelButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-				}
-			});
-			cancelButton.setBounds(98, 50, 90, 25);
-			contentPanel.add(cancelButton);
-			cancelButton.setActionCommand("Cancel");
-		}
 		
-		JLabel lblNewLabel = new JLabel(message);
+		JLabel lblNewLabel = new JLabel("Exporting to Schematic...");
 		lblNewLabel.setVerticalAlignment(SwingConstants.BOTTOM);
 		lblNewLabel.setFont(new Font("ËÎÌו", Font.PLAIN, 16));
 		lblNewLabel.setBounds(29, 15, 234, 25);

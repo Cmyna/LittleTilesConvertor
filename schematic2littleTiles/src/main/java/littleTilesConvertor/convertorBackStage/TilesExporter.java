@@ -70,6 +70,12 @@ public class TilesExporter {
 		out.close();
 	}
 	
+	public static void writeSchematic(File f, CompoundTag sche) throws IOException {
+		NBTOutputStream out = new NBTOutputStream(new FileOutputStream(f));
+		out.writeTag(sche);
+		out.close();
+	}
+	
 	
 	private static String writeNullBrace(String str) { // write {}
 		str = "{"+str+"}";

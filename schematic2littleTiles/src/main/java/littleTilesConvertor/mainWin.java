@@ -31,6 +31,8 @@ import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileFilter;
 
 import littleTilesConvertor.convertorBackStage.BlockBuffer;
+import littleTilesConvertor.convertorBackStage.SchemTesting;
+import littleTilesConvertor.convertorBackStage.TilesExporter;
 import littleTilesConvertor.convertorBackStage.schemReadIn;
 
 import javax.swing.JScrollPane;
@@ -41,8 +43,10 @@ import java.io.IOException;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.DefaultComboBoxModel;
 
 public class mainWin extends JFrame {
@@ -53,6 +57,9 @@ public class mainWin extends JFrame {
 	private JLabel scheDir;
 	private File file;
 	private JComboBox Grid;
+	private File importFile;
+	private File exportFile;
+	//private boolean export;
 
 	/**
 	 * Launch the application.
@@ -157,7 +164,9 @@ public class mainWin extends JFrame {
 						String lt = bb.getLTJson();
 						if (lt.length()>=250000) {
 							littleTilesJson = lt;
-							lt = lt.substring(0, 200) + "...\n\n\n\n\nUse Copy Buttion to get full Text";
+							lt = lt.substring(0, 200) + "...\n\n\n\nUse Copy Buttion to get full Text";
+						} else {
+							littleTilesJson = lt;
 						}
 						textArea.setText(lt);
 					}
@@ -165,7 +174,7 @@ public class mainWin extends JFrame {
 				}, "back");
 				/*convertProgress cp = new convertProgress(bb);
 				cp.setVisible(true);*/
-				
+				textArea.setText("Converting...");
 				back.start();
 			}
 		});
@@ -206,6 +215,22 @@ public class mainWin extends JFrame {
 		scrollPane.setViewportView(textArea);
 		
 		JButton toSche = new JButton("export");
+		toSche.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser saver = new JFileChooser();
+				saver.setFileFilter(schematicFilter);
+				int option = saver.showSaveDialog(null);
+				if(option==JFileChooser.APPROVE_OPTION) { 
+					//export = false;
+					exportFile = saver.getSelectedFile();
+					String fname = saver.getName(exportFile);
+					if (fname.indexOf(".schematic")==-1) {
+						exportFile = new File(saver.getCurrentDirectory(),fname+".schematic");
+					}
+					export();
+				}
+			}
+		});
 		toSche.setFont(new Font("宋体", Font.PLAIN, 20));
 		toSche.setBounds(495, 204, 121, 30);
 		littleTiles.add(toSche);
@@ -232,7 +257,7 @@ public class mainWin extends JFrame {
 						try {
 							littleTilesJson = (String) trans.getTransferData(DataFlavor.stringFlavor);
 							String lt = littleTilesJson;
-							if (littleTilesJson.length() >= 200000) lt = littleTilesJson.substring(0, 200);
+							if (littleTilesJson.length() >= 200000) lt = littleTilesJson.substring(0, 200) + "...\n\n\n\nUse Copy Buttion to get full Text";
 							textArea.setText(lt);
 						} catch (UnsupportedFlavorException e) {
 							// TODO Auto-generated catch block
@@ -249,6 +274,27 @@ public class mainWin extends JFrame {
 		paste.setFont(new Font("宋体", Font.PLAIN, 20));
 		paste.setBounds(495, 87, 121, 30);
 		littleTiles.add(paste);
+		
+		JLabel lblNewLabel = new JLabel("Export as");
+		lblNewLabel.setFont(new Font("宋体", Font.PLAIN, 15));
+		lblNewLabel.setBounds(495, 164, 121, 25);
+		littleTiles.add(lblNewLabel);
+		
+		JLabel lblNewLabel_1 = new JLabel("Schematic file");
+		lblNewLabel_1.setFont(new Font("宋体", Font.PLAIN, 15));
+		lblNewLabel_1.setBounds(495, 180, 123, 25);
+		littleTiles.add(lblNewLabel_1);
+	}
+	
+	private void export() {
+		BlockBuffer bb = new BlockBuffer(littleTilesJson, SchemTesting.getTableV112());
+		bb.LTtoSchem();
+		try {
+			TilesExporter.writeSchematic(exportFile, TilesExporter.constructSchematic(bb));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	
@@ -269,4 +315,22 @@ public class mainWin extends JFrame {
 		}
 		
 	};
+	
+	/*private Thread exportSchem = new Thread(new Runnable() {
+
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			BlockBuffer bb = new BlockBuffer(littleTilesJson, SchemTesting.getTableV112());
+			bb.LTtoSchem();
+			try {
+				TilesExporter.writeSchematic(exportFile, TilesExporter.constructSchematic(bb));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			export = true;
+		}
+		
+	});*/
 }
